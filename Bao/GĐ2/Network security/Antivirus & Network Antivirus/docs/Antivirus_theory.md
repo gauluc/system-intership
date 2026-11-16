@@ -26,3 +26,15 @@ Một người dùng tải file malware.exe từ Internet
 
 ## 2. Các phương pháp phát hiện mã độc
 
+### 2.1 Signature-based Detection
+
+Phát hiện dựa trên chữ ký mã độc đã biết
+
+Mỗi mã độc có thể có những đặc điểm nhận dạng như:
+
+- Hash MD5, SHA-256
+- Byte pattern
+- Chuỗi lệnh đặc trưng
+- Cấu trúc file độc hại
+
+
