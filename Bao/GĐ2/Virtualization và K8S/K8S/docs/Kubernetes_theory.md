@@ -47,3 +47,131 @@ Các thành phần quan trọng
 
 Mọi yêu cầu quản lý Cluster đều đi qua API Server
 
+2. etcd
+
+etcd là cơ sở dữ liệu key-value phân tán dùng để lưu trữ trạng thái của Kubernetes
+
+Nó lưu thông tin như:
+
+- Pod
+- Deployment
+- Service
+- ConfigMap
+- Secret
+- Node
+- Namespace
+- Cluster configuration
+
+Trong môi trường Production, etcd cần:
+
+- Backup thường xuyên
+- Bảo vệ dữ liệu
+- Mã hóa khi cần
+- Triển khai HA với số lượng member phù hợp, thường là 3 hoặc 5
+- Giám sát quorum, latency và dung lượng
+
+3. kube-scheduler
+
+Scheduler chịu trách nhiệm lựa chọn Worker Node để chạy Pod chưa được phân bổ
+
+Scheduler xem xét:
+
+- CPU
+- Memory
+- Node Affinity
+- Pod Affinity
+- Taints và Tolerations
+- Topology Spread
+- Volume Constraints
+- Các chính sách scheduling khác
+
+4. kube-controller-manager
+
+Đây là thành phần chạy các Controller để duy trì trạng thái mong muốn
+
+Một số Controller:
+
+|Controller	|Chức năng|
+| :--- | :--- |
+|Node Controller	|Theo dõi trạng thái |
+|ReplicaSet Controller	|Duy trì số lượng Pod|
+|Deployment Controller	|Quản lý Deployment|
+|Job Controller	|Quản lý Job|
+|EndpointSlice Controller	|Quản lý EndpointSlice|
+|Namespace Controller	|Quản lý vòng đời Namespace|
+
+5. Cloud Controller Manager
+
+Thành phần tích hợp Kubernetes với Cloud Provider
+
+Ví dụ:
+
+- Tạo Cloud Load Balancer
+- Quản lý Node liên quan đến hạ tầng Cloud
+- Quản lý một số loại Route
+
+Trong môi trường tự triển khai, có thể sử dụng Cloud Controller Manager của nền tảng tương ứng hoặc không triển khai thành phần này nếu không cần
+
+### 2.2 Worker Node
+
+Worker Node là máy chủ thực thi ứng dụng
+
+Một Worker Node có những thành phần chính
+
+1. kubelet
+
+Kubelet là Agent chạy trên mỗi Worker Node
+
+Nhiệm vụ:
+
+- Nhận thông tin Pod được giao
+- Kiểm tra trạng thái container
+- Gọi Container Runtime
+- Đảm bảo container chạy theo cấu hình Pod
+- Báo cáo trạng thái về API Server
+
+2. Container Runtime
+
+Container Runtime chịu trách nhiệm chạy container
+
+Ví dụ:
+
+- containerd
+- CRI-O
+
+Kubernetes giao tiếp với Container Runtime thông qua CRI (Container Runtime Interface)
+
+Một điểm rất quan trọng: Docker Engine không còn là Container Runtime trực tiếp được Kubernetes hỗ trợ mặc định thông qua dockershim từ Kubernetes 1.24 trở đi. Docker-built images vẫn có thể chạy trên các runtime tương thích OCI như containerd
+
+3. kube-proxy
+
+kube-proxy thực hiện các chức năng mạng cho Service trong nhiều cấu hình Kubernetes
+
+Thông thường nó sử dụng:
+
+- iptables
+- IPVS
+
+Nó thiết lập các quy tắc để chuyển traffic đến các Pod phù hợp
+
+Lưu ý: Một số CNI như Cilium có thể thay thế kube-proxy bằng cơ chế eBPF
+
+4. CNI Plugin
+
+CNI (Container Network Interface) là giao diện và hệ sinh thái plugin cấu hình mạng cho container
+
+Ví dụ:
+
+- Calico
+- Flannel
+- Cilium
+- OVN-Kubernetes
+- Kube-OVN
+
+CNI có nhiệm vụ:
+
+- Cấp IP cho Pod
+- Kết nối Pod với Network
+- Hỗ trợ routing
+- Hỗ trợ Network Policy tùy plugin
+- Hỗ trợ các mô hình Overlay hoặc Routing
